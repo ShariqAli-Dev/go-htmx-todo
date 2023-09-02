@@ -11,14 +11,10 @@ import (
 )
 
 func main() {
-	// create a new engine
 	engine := html.New("./views", ".html")
-
-	// pass the engine to views
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
-	// this is for things like assets or css or js files
 	app.Static("/", "./public")
 
 	app.Get("/", func(c *fiber.Ctx) error {
@@ -26,11 +22,6 @@ func main() {
 			"Title": "Hello World",
 		}, "layouts/main")
 	})
-	// app.Get("/layout", func(c *fiber.Ctx) error {
-	// 	return c.Render("index", fiber.Map{
-	// 		"Title": "Hello, World",
-	// 	}, "layouts/main")
-	// })
 
 	log.Fatal(app.Listen(":3000"))
 }
