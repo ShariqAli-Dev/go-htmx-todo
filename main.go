@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -10,7 +11,10 @@ import (
 )
 
 func main() {
+	// create a new engine
 	engine := html.New("./views", ".html")
+
+	// pass the engine to views
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
@@ -20,9 +24,15 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Render("index", fiber.Map{
 			"Title": "Hello World",
-		})
+		}, "layouts/main")
 	})
-	app.Listen(":3000")
+	// app.Get("/layout", func(c *fiber.Ctx) error {
+	// 	return c.Render("index", fiber.Map{
+	// 		"Title": "Hello, World",
+	// 	}, "layouts/main")
+	// })
+
+	log.Fatal(app.Listen(":3000"))
 }
 
 func database() {
