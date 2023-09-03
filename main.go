@@ -15,22 +15,25 @@ type Task struct {
 	Completed bool
 }
 
-func queryDB(db *sql.DB) sql.Stmt {
-	statement, err := db.Prepare("")
-	if err != nil {
-		log.Fatalf("Failed to create DB: %v", err)
-	}
-
-	return *statement
-}
-
 func main() {
 	db, err := sql.Open("sqlite3", "./database.db")
 	if err != nil {
-		log.Fatalf("Failed to create DB: %v", err)
+		fmt.Println("Failed to create DB: ", err)
+		return
 	}
+	defer db.Close()
 
-	// create tables
+	// intialize the database
+	initStatement, err := db.Prepare("create table if not exists task (id integer primany key, name text, completed boolean)")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	_, err = initStatement.Exec()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
@@ -39,6 +42,15 @@ func main() {
 	app.Static("/", "./public")
 
 	app.Get("/", func(c *fiber.Ctx) error {
+		// template an insert statement
+		insertStatement, err := db.Prepare("insert into task (name, completed) values (?, true)")
+		if err != nil {
+			return err
+		}
+		_, err = insertStatement.Exec("do the dishes")
+		if err != nil {
+			return err
+		}
 
 		tasks := []Task{
 			{Name: "wash dishes", Completed: false},
