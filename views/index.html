@@ -1,9 +1,25 @@
 {{ template "partials/header" . }}
 
-<h1 class="bg-red-50 m-80">
-    The Best Todo App Known To Man
-</h1>
+<section class="flex grow pt-10 h-full flex-col items-center justify-around">
+    <form>
+        <div>
+            <label class="text-center">Task: </label>
+            <input />
+            <button>submit ticket</button>
+        </div>
+    </form>
 
+    <div>
+        <ul>
+            {{ range .Tasks }}
+            {{ if .Completed }}
+            <li class="line-through">{{ .Name }}</li>
+            {{ else }}
+            <li>{{ .Name }}</li>
+            {{ end }}
+            {{ end }}
+        </ul>
+    </div>
+</section>
 
-
-{{ template "partials/footer" . }}
+<!-- {{ template "partials/footer" . }} -->

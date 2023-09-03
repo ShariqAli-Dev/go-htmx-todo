@@ -10,7 +10,28 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+type Task struct {
+	Name      string
+	Completed bool
+}
+
+func queryDB(db *sql.DB) sql.Stmt {
+	statement, err := db.Prepare("")
+	if err != nil {
+		log.Fatalf("Failed to create DB: %v", err)
+	}
+
+	return *statement
+}
+
 func main() {
+	db, err := sql.Open("sqlite3", "./database.db")
+	if err != nil {
+		log.Fatalf("Failed to create DB: %v", err)
+	}
+
+	// create tables
+
 	engine := html.New("./views", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -18,8 +39,15 @@ func main() {
 	app.Static("/", "./public")
 
 	app.Get("/", func(c *fiber.Ctx) error {
+
+		tasks := []Task{
+			{Name: "wash dishes", Completed: false},
+			{Name: "take the dog out for a walk", Completed: true},
+			{Name: "water the plants", Completed: false},
+		}
+
 		return c.Render("index", fiber.Map{
-			"Title": "Hello World",
+			"Tasks": tasks,
 		}, "layouts/main")
 	})
 
