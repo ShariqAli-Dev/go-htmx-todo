@@ -1,1 +1,5 @@
+{{ if .Completed }}
+<li class="line-through">{{ .Name }}</li>
+{{ else }}
 <li>{{ .Name }}</li>
+{{ end }}

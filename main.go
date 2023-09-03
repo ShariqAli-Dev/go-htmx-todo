@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
@@ -74,6 +75,8 @@ func main() {
 	})
 
 	app.Post("/add-todo", func(c *fiber.Ctx) error {
+		const SLEEP_SECONDS = 1
+		time.Sleep(SLEEP_SECONDS * time.Second)
 		taskName := c.FormValue("name")
 		insertTaskStatement, err := db.Prepare("insert into task (name, completed) values (?, false)")
 		if err != nil {
@@ -86,12 +89,12 @@ func main() {
 			return err
 		}
 		return c.Render("partials/task", fiber.Map{
-			"Name": taskName,
+			"Name":     taskName,
+			"Complted": false,
 		})
 	})
 
 	app.Get("/", func(c *fiber.Ctx) error {
-
 		var tasks []Task
 		var id int
 		var name string

@@ -3,7 +3,7 @@
 <section class="flex flex-col items-center justify-around h-full pt-10 grow">
     <form hx-post="/add-todo" hx-target="#todo-list" hx-swap="beforeend" hx-indicator="#add-todo-spinner">
         <label class="text-center" for="todo-name">Task: </label>
-        <input type="text" name="name" id="todo-name" />
+        <input type="text" name="name" id="todo-name" required />
         <span class="htmx-indicator " aria-hidden="true" id="add-todo-spinner">loading...</span>
         <button type="submit">submit ticket</button>
     </form>
@@ -11,11 +11,7 @@
     <div>
         <ul id="todo-list">
             {{ range .Tasks }}
-            {{ if .Completed }}
-            <li class="line-through">{{ .Name }}</li>
-            {{ else }}
-            <li>{{ .Name }}</li>
-            {{ end }}
+            {{ template "partials/task" . }}
             {{ end }}
         </ul>
     </div>
