@@ -1,16 +1,15 @@
 {{ template "partials/header" . }}
 
-<section class="flex grow pt-10 h-full flex-col items-center justify-around">
-    <form>
-        <div>
-            <label class="text-center">Task: </label>
-            <input />
-            <button>submit ticket</button>
-        </div>
+<section class="flex flex-col items-center justify-around h-full pt-10 grow">
+    <form hx-post="/add-todo" hx-target="#todo-list" hx-swap="beforeend" hx-indicator="#add-todo-spinner">
+        <label class="text-center" for="todo-name">Task: </label>
+        <input type="text" name="name" id="todo-name" />
+        <span class="htmx-indicator " aria-hidden="true" id="add-todo-spinner">loading...</span>
+        <button type="submit">submit ticket</button>
     </form>
 
     <div>
-        <ul>
+        <ul id="todo-list">
             {{ range .Tasks }}
             {{ if .Completed }}
             <li class="line-through">{{ .Name }}</li>
@@ -21,5 +20,3 @@
         </ul>
     </div>
 </section>
-
-<!-- {{ template "partials/footer" . }} -->

@@ -42,20 +42,56 @@ func main() {
 	})
 	app.Static("/", "./public")
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		// template an insert statement
+	app.Get("/get-tasks", func(c *fiber.Ctx) error {
+		// template for get tasks statement
+		var tasks []Task
+		var id int
+		var name string
+		var completed bool
+		rows, err := db.Query("select id, name, completed from task")
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			err := rows.Scan(&id, &name, &completed)
+			if err != nil {
+				fmt.Println(err)
+				return err
+			}
+			newTask := Task{
+				Id:        id,
+				Name:      name,
+				Completed: completed,
+			}
+			tasks = append(tasks, newTask)
+		}
+		return c.Render("partials/task", fiber.Map{
+			"Tasks": tasks,
+		})
+	})
+
+	app.Post("/add-todo", func(c *fiber.Ctx) error {
+		taskName := c.FormValue("name")
 		insertTaskStatement, err := db.Prepare("insert into task (name, completed) values (?, false)")
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
-		_, err = insertTaskStatement.Exec("do the dishes")
+		_, err = insertTaskStatement.Exec(taskName)
 		if err != nil {
 			fmt.Println(err)
 			return err
 		}
+		return c.Render("partials/task", fiber.Map{
+			"Name": taskName,
+		})
+	})
 
-		// template for get tasks statement
+	app.Get("/", func(c *fiber.Ctx) error {
+
 		var tasks []Task
 		var id int
 		var name string
